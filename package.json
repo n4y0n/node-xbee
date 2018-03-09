@@ -2,11 +2,12 @@
   "name": "xbee-node",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/XBee.js",
+  "types": "dist/XBee.d.ts",
   "scripts": {
     "build": "tsc",
-    "dev": "npm run build & npm start",
-    "start": "node dist/index.js"
+    "dev": "npm run build & npm start-dev",
+    "start-dev": "node dist/index.js"
   },
   "keywords": [],
   "author": "Ernesto Montada Romero",

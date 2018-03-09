@@ -1,4 +1,4 @@
-import { XBee } from "./XBee";
+import { XBee } from "./src/XBee";
 
 const xbee1 = new XBee('COM1');
 

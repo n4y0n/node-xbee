@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "npm run build & npm start-dev",
-    "start-dev": "node dist/index.js"
+    "start-dev": "node dist/test.js"
   },
   "keywords": [],
   "author": "Ernesto Montada Romero",

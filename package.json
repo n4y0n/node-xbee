@@ -1,5 +1,5 @@
 {
-  "name": "cansat-raspberry-server",
+  "name": "xbee-node",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,8 +9,8 @@
     "start": "node dist/index.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Ernesto Montada Romero",
+  "license": "MIT",
   "dependencies": {
     "serialport": "^6.1.1"
   },

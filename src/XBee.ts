@@ -1,15 +1,16 @@
 import * as SerialPort from "serialport";
 import { EventEmitter } from "events";
 
-export const DELIMETER: string = "\n";
+export const DELIMETER: string = "\n"; // 0x0A
 export const DEFAULT_BAUDRATE: number = 9600;
+
 
 /**
  * Wrapper class around SerialPort default methods
  */
 export class XBee extends EventEmitter {
   port: SerialPort;
-  parser: SerialPort.parsers.Readline;
+  private parser: SerialPort.parsers.Readline;
 
   /**
    * Initialize the xbee class and bind it to a serial port
@@ -30,9 +31,17 @@ export class XBee extends EventEmitter {
     
     this.port.pipe(this.parser);
     
-    this.parser.on("data", (data) => {
-      this.emit("data", data);
+    this.parser.on("data", (...args: any[]) => {
+      this.emit("data", args);
     });
+  }
+
+  /**
+   * The same as .on("data", callback)
+   * @param callback The callback with the data
+   */
+  onData(callback: (...args: any[]) => void): void {
+    this.on("data", callback);
   }
 
   /**

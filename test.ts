@@ -1,6 +1,6 @@
 import { XBee } from "./src/XBee";
 
-const xbee1 = new XBee('COM1');
+const xbee1 = new XBee(process.env.SATSERIAL || 'COM1');
 
 xbee1.onData((data) => {
   console.log(data);

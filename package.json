@@ -1,11 +1,12 @@
 {
-  "name": "xbee-node",
-  "version": "1.0.0",
+  "name": "xbee-module",
+  "version": "0.0.1",
   "description": "",
   "main": "dist/XBee.js",
   "types": "dist/XBee.d.ts",
   "scripts": {
     "build": "tsc",
+    "install": "npm run build",
     "dev": "npm run build & npm start-dev",
     "start-dev": "node dist/test.js"
   },

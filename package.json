@@ -6,12 +6,17 @@
   "types": "dist/XBee.d.ts",
   "scripts": {
     "build": "tsc",
-    "install": "npm run build",
-    "dev": "npm run build & npm start-dev",
-    "start-dev": "node dist/test.js"
+    "install": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/n4y0n/node-xbee.git"
+  },
+  "bugs": {
+    "url": "https://github.com/n4y0n/node-xbee/issues"
   },
   "keywords": [],
-  "author": "Ernesto Montada Romero",
+  "author": "Ernesto Montada",
   "license": "MIT",
   "dependencies": {
     "serialport": "^6.1.1"

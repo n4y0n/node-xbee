@@ -1,5 +1,5 @@
 {
-  "name": "xbee-module",
+  "name": "module-xbee",
   "version": "0.0.1",
   "description": "",
   "main": "dist/XBee.js",

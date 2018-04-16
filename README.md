@@ -2,12 +2,12 @@
 A xbee transparent mode module for nodejs 
 ## Installation 
 ```sh
-npm install xbee-module --save
+npm install module-xbee --save
 ```
 ## Usage
 ### Javascript
 ```javascript
-var Xbee = require('xbee-module');
+var Xbee = require('module-xbee');
 var xbee = new XBee("PORT")
 xbee.sendData("some data")
 
@@ -18,7 +18,7 @@ xbee.on("data", function(data) {
 
 ### TypeScript
 ```typescript
-import { XBee } from 'xbee-module';
+import { XBee } from 'module-xbee';
 let xbee: XBee = new XBee("PORT")
 xbee.sendData("some data")
 

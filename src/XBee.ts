@@ -105,11 +105,11 @@ export class XBee extends EventEmitter {
     else if (string.indexOf(GPS_DELIMETER) !== -1) this.emit("gps-data", string.split(GPS_DELIMETER)[1]);
     else if (string.indexOf(BME_DELIMETER) !== -1) this.emit("bme-data", string.split(BME_DELIMETER)[1]);
     else if (string.indexOf(BNO_DELIMETER) !== -1) this.emit("bno-data", string.split(BNO_DELIMETER)[1]);
-    else if (string.indexOf(DELIMETERS.loc) !== -1) this.emit("loc", string.split(DELIMETERS.loc)[1]);
-    else if (string.indexOf(DELIMETERS.ori) !== -1) this.emit("ori", string.split(DELIMETERS.ori)[1]);
-    else if (string.indexOf(DELIMETERS.pre) !== -1) this.emit("pre", string.split(DELIMETERS.pre)[1]);
-    else if (string.indexOf(DELIMETERS.tmp) !== -1) this.emit("tmp", string.split(DELIMETERS.tmp)[1]);
-    else if (string.indexOf(DELIMETERS.umd) !== -1) this.emit("umd", string.split(DELIMETERS.umd)[1]);
+    else if (string.indexOf(DELIMETERS.loc) !== -1) this.emit("locatio", string.split(DELIMETERS.loc)[1]);
+    else if (string.indexOf(DELIMETERS.ori) !== -1) this.emit("orientation", string.split(DELIMETERS.ori)[1]);
+    else if (string.indexOf(DELIMETERS.pre) !== -1) this.emit("pressure", string.split(DELIMETERS.pre)[1]);
+    else if (string.indexOf(DELIMETERS.tmp) !== -1) this.emit("tmperature", string.split(DELIMETERS.tmp)[1]);
+    else if (string.indexOf(DELIMETERS.umd) !== -1) this.emit("umidity", string.split(DELIMETERS.umd)[1]);
     else this.emit("data", string);
   }
 

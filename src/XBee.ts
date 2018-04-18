@@ -3,7 +3,11 @@ import {
   EventEmitter
 } from "events";
 
-// TODO: add custom emitter and delimeter addParser(delimeter, emitter-name)
+// TODO: add custom emitter and delimeter for every type of data addParser(delimeter, emitter-name
+
+/**
+ * @typedef {string | Buffer | number} DATAS
+ */
 
 /**
  * @description Delimeter for the method ```sendCommand``` and ```onCommand()``` or ```on("command", callback)```
@@ -20,18 +24,29 @@ export const DELIMETER: string = "\n"; // 0x0A
  */
 export const DEFAULT_BAUDRATE: number = 115200;
 
+const DELIMETERS = {
+  loc: "°*",
+  tmp: "§é",
+  ori: "_:",
+  umd: ":°é",
+  pre: "°*ç§"
+}
+
 /**
  * @description Delimeter for the ```gpsData()``` method
+ * @deprecated
  */
 const GPS_DELIMETER: string = "m-gps|";
 
 /**
  * @description Delimeter for the ```bmeData()``` method
+ * @deprecated
  */
 const BME_DELIMETER: string = "m-bne|";
 
 /**
  * @description Delimeter for the ```bnoData()``` method
+ * @deprecated
  */
 const BNO_DELIMETER: string = "m-bno|";
 
@@ -71,7 +86,7 @@ export class XBee extends EventEmitter {
   }
 
   /**
-   * @description Method to handle the parsing of the data arriving from the other xbee device
+   * @description Handle the parsing of the data arriving from the other xbee device
    * @param {any[]} data Data to parse
    */
   handleData(data: any[]) {
@@ -90,6 +105,11 @@ export class XBee extends EventEmitter {
     else if (string.indexOf(GPS_DELIMETER) !== -1) this.emit("gps-data", string.split(GPS_DELIMETER)[1]);
     else if (string.indexOf(BME_DELIMETER) !== -1) this.emit("bme-data", string.split(BME_DELIMETER)[1]);
     else if (string.indexOf(BNO_DELIMETER) !== -1) this.emit("bno-data", string.split(BNO_DELIMETER)[1]);
+    else if (string.indexOf(DELIMETERS.loc) !== -1) this.emit("loc", string.split(DELIMETERS.loc)[1]);
+    else if (string.indexOf(DELIMETERS.ori) !== -1) this.emit("ori", string.split(DELIMETERS.ori)[1]);
+    else if (string.indexOf(DELIMETERS.pre) !== -1) this.emit("pre", string.split(DELIMETERS.pre)[1]);
+    else if (string.indexOf(DELIMETERS.tmp) !== -1) this.emit("tmp", string.split(DELIMETERS.tmp)[1]);
+    else if (string.indexOf(DELIMETERS.umd) !== -1) this.emit("umd", string.split(DELIMETERS.umd)[1]);
     else this.emit("data", string);
   }
 
@@ -111,7 +131,8 @@ export class XBee extends EventEmitter {
 
   /**
    * @description The same as .on("bno-data", callback)
-   * @param {Function} callback The callback with the command
+   * @param {Function} callback The callback with the bnoData
+   * @deprecated use ```send[LOC,UMD,PRE,TMP,ORI]``` instead
    */
   onBnoData(callback: (...args: any[]) => void): void {
     this.on("bno-data", callback);
@@ -119,7 +140,8 @@ export class XBee extends EventEmitter {
 
   /**
    * @description The same as .on("bme-data", callback)
-   * @param {Function} callback The callback with the command
+   * @param {Function} callback The callback with the bmeData
+   * @deprecated use ```send[LOC,UMD,PRE,TMP,ORI]``` instead
    */
   onBmeData(callback: (...args: any[]) => void): void {
     this.on("bme-data", callback);
@@ -127,7 +149,8 @@ export class XBee extends EventEmitter {
 
   /**
    * @description The same as .on("gps-data", callback)
-   * @param {Function} callback The callback with the command
+   * @param {Function} callback The callback with the gpsData
+   * @deprecated use ```send[LOC,UMD,PRE,TMP,ORI]``` instead
    */
   onGpsData(callback: (...args: any[]) => void): void {
     this.on("gps-data", callback);
@@ -135,19 +158,19 @@ export class XBee extends EventEmitter {
 
   /**
    * @description Sends some data through the serial interface
-   * @param {string | Buffer | number} data Data to send in the form of a string, buffer, or number 
+   * @param {DATAS} data Data to send in the form of a string, buffer, or number 
    * @example 
    * const xbee = new XBee("port")
    * let a = "data to send"
    * xbee.sendData(a)
    */
-  sendData(data: string | Buffer | number): void {
+  sendData(data: any): void {
     if (this.port.writable)
       this.port.write(`${data}${DELIMETER}`);
   }
 
   /**
-   * @description Method to send commands to ```onCommand(callback)``` or ```on("command", callback)```
+   * @description Send commands to ```onCommand(callback)``` or ```on("command", callback)```
    * @param {string} command Command to send
    * @example 
    * xbee.sendCommand("leftMotorOff")
@@ -157,7 +180,7 @@ export class XBee extends EventEmitter {
   }
 
   /**
-   * @description Method to send bnodata to ```onBnoData(callback)``` or ```on("bno-data", callback)``` 
+   * @description Send bnodata to ```onBnoData(callback)``` or ```on("bno-data", callback)``` 
    * @param {string} bnoData data to send
    */
   sendBnoData(bnoData: string) {
@@ -165,7 +188,7 @@ export class XBee extends EventEmitter {
   }
 
   /**
-   * @description Method to send bmedata to ```onBmeData(callback)``` or ```on("bme-data", callback)```
+   * @description Send bmedata to ```onBmeData(callback)``` or ```on("bme-data", callback)```
    * @param {string} bmeData data to send
    */
   sendBmeData(bmeData: string) {
@@ -173,10 +196,50 @@ export class XBee extends EventEmitter {
   }
 
   /**
-   * @description Method to send gpsData to ```onGpsData(callback)``` or ```on("gps-data", callback)```
+   * @description Send gpsData to ```onGpsData(callback)``` or ```on("gps-data", callback)```
    * @param {string} gpsData data to send
    */
   sendGpsData(gpsData: string) {
     this.sendData(`${GPS_DELIMETER}${gpsData}`)
+  }
+
+  /**
+   * @description Send location data
+   * @param {any} data
+   */
+  sentLOC(data: any) {
+    this.sendData(`${DELIMETERS.loc}${JSON.stringify(data)}`)
+  }
+
+  /**
+   * @description Send orientation data
+   * @param {any} data
+   */
+  sendORI(data: any) {
+    this.sendData(`${DELIMETERS.ori}${JSON.stringify(data)}`)
+  }
+
+  /**
+   * @description Send umidity data
+   * @param {any} data
+   */
+  sendUMD(data: any) {
+    this.sendData(`${DELIMETERS.umd}${JSON.stringify(data)}`)
+  }
+
+  /**
+   * @description Send pessure data
+   * @param {any} data
+   */
+  sendPRE(data: any) {
+    this.sendData(`${DELIMETERS.pre}${JSON.stringify(data)}`)
+  }
+
+  /**
+   * @description Send temperature data
+   * @param {any} data
+   */
+  sendTMP(data: any) {
+    this.sendData(`${DELIMETERS.tmp}${JSON.stringify(data)}`)
   }
 }

@@ -29,7 +29,7 @@ const DELIMETERS = {
   tmp: "§é",
   ori: "_:",
   umd: ":°é",
-  pre: "°*ç§"
+  pre: "°*"
 }
 
 /**

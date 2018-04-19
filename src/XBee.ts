@@ -25,11 +25,11 @@ export const DELIMETER: string = "\n"; // 0x0A
 export const DEFAULT_BAUDRATE: number = 115200;
 
 const DELIMETERS = {
-  loc: "°*",
-  tmp: "§é",
-  ori: "_:",
-  umd: ":°",
-  pre: "'ù"
+  loc: "L{",
+  tmp: "T{",
+  ori: "O{",
+  umd: "U{",
+  pre: "P{"
 }
 
 /**

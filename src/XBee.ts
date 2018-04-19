@@ -108,8 +108,8 @@ export class XBee extends EventEmitter {
     else if (string.indexOf(DELIMETERS.loc) !== -1) this.emit("location", string.split(DELIMETERS.loc)[1]);
     else if (string.indexOf(DELIMETERS.ori) !== -1) this.emit("orientation", string.split(DELIMETERS.ori)[1]);
     else if (string.indexOf(DELIMETERS.pre) !== -1) this.emit("pressure", string.split(DELIMETERS.pre)[1]);
-    else if (string.indexOf(DELIMETERS.tmp) !== -1) this.emit("tmperature", string.split(DELIMETERS.tmp)[1]);
-    else if (string.indexOf(DELIMETERS.umd) !== -1) this.emit("umidity", string.split(DELIMETERS.umd)[1]);
+    else if (string.indexOf(DELIMETERS.tmp) !== -1) this.emit("temperature", string.split(DELIMETERS.tmp)[1]);
+    else if (string.indexOf(DELIMETERS.umd) !== -1) this.emit("humidity", string.split(DELIMETERS.umd)[1]);
     else this.emit("data", string);
   }
 

@@ -7,7 +7,7 @@ npm install module-xbee --save
 ## Usage
 ### Javascript
 ```javascript
-var Xbee = require('module-xbee');
+var XBee = require('module-xbee').XBee;
 var xbee = new XBee("PORT")
 xbee.sendData("some data")
 

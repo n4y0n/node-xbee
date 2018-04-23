@@ -2,17 +2,28 @@ import * as SerialPort from "serialport";
 import {
   EventEmitter
 } from "events";
+import {
+  SerCom
+} from "./Protocoler";
 
 // TODO: add custom emitter and delimeter for every type of data addParser(delimeter, emitter-name
 
 /**
  * @typedef {string | Buffer | number} DATAS
+ * @typedef {"location" | "temperature" | "orientation" | "humidity" | "pressure" | "target" | "status" | "command"} EventType
  */
 
-/**
- * @description Delimeter for the method ```sendCommand``` and ```onCommand()``` or ```on("command", callback)```
- */
-const COMMAND_DELIMETER: string = ">$<";
+const DELIMETERS = {
+  location: "L{",
+  temperature: "T{",
+  orientation: "O{",
+  humidity: "U{",
+  pressure: "P{",
+  target: "G{",
+  status: "W{",
+  command: "C{"
+};
+
 
 /**
  * @description Default delimeter for the parser to work
@@ -24,38 +35,11 @@ export const DELIMETER: string = "\n"; // 0x0A
  */
 export const DEFAULT_BAUDRATE: number = 115200;
 
-const DELIMETERS = {
-  loc: "L{",
-  tmp: "T{",
-  ori: "O{",
-  umd: "U{",
-  pre: "P{"
-}
-
-/**
- * @description Delimeter for the ```gpsData()``` method
- * @deprecated
- */
-const GPS_DELIMETER: string = "m-gps|";
-
-/**
- * @description Delimeter for the ```bmeData()``` method
- * @deprecated
- */
-const BME_DELIMETER: string = "m-bne|";
-
-/**
- * @description Delimeter for the ```bnoData()``` method
- * @deprecated
- */
-const BNO_DELIMETER: string = "m-bno|";
-
-
 /**
  * @description Wrapper class around SerialPort default methods
  * @extends {EventEmitter}
  */
-export class XBee extends EventEmitter {
+export class XBee extends EventEmitter implements SerCom {
   port: SerialPort;
   private parser: SerialPort.parsers.Readline;
 
@@ -89,7 +73,7 @@ export class XBee extends EventEmitter {
    * @description Handle the parsing of the data arriving from the other xbee device
    * @param {any[]} data Data to parse
    */
-  handleData(data: any[]) {
+  handleData(data: any[]): void {
     if (!data || data.length < 1) return;
     data.forEach(d => {
       this.check(d.toString());
@@ -100,60 +84,21 @@ export class XBee extends EventEmitter {
    * @description Simple parser for the possible types of data
    * @param {String} string Raw data to parse as ```string```
    */
-  check(string: string) {
-    if (string.indexOf(COMMAND_DELIMETER) !== -1) this.emit("command", string.split(COMMAND_DELIMETER)[1]);
-    else if (string.indexOf(GPS_DELIMETER) !== -1) this.emit("gps-data", string.split(GPS_DELIMETER)[1]);
-    else if (string.indexOf(BME_DELIMETER) !== -1) this.emit("bme-data", string.split(BME_DELIMETER)[1]);
-    else if (string.indexOf(BNO_DELIMETER) !== -1) this.emit("bno-data", string.split(BNO_DELIMETER)[1]);
-    else if (string.indexOf(DELIMETERS.loc) !== -1) this.emit("location", string.split(DELIMETERS.loc)[1]);
-    else if (string.indexOf(DELIMETERS.ori) !== -1) this.emit("orientation", string.split(DELIMETERS.ori)[1]);
-    else if (string.indexOf(DELIMETERS.pre) !== -1) this.emit("pressure", string.split(DELIMETERS.pre)[1]);
-    else if (string.indexOf(DELIMETERS.tmp) !== -1) this.emit("temperature", string.split(DELIMETERS.tmp)[1]);
-    else if (string.indexOf(DELIMETERS.umd) !== -1) this.emit("humidity", string.split(DELIMETERS.umd)[1]);
-    else this.emit("data", string);
+  check(string: string): void {
+    Object.keys(DELIMETERS).forEach((k) => {
+      if (string.indexOf(DELIMETERS[k]) !== -1) {
+        this.emit(k, string.split(DELIMETERS[k])[1])
+      }
+    })
   }
 
   /**
-   * @description The same as .on("data", callback)
-   * @param {Function} callback The callback with the data
+   * 
+   * @param {EventType} event Event name
+   * @param {any} data 
    */
-  onData(callback: (...args: any[]) => void): void {
-    this.on("data", callback);
-  }
-
-  /**
-   * @description The same as .on("command", callback)
-   * @param {Function} callback The callback with the command
-   */
-  onCommand(callback: (...args: any[]) => void): void {
-    this.on("command", callback);
-  }
-
-  /**
-   * @description The same as .on("bno-data", callback)
-   * @param {Function} callback The callback with the bnoData
-   * @deprecated use ```send[LOC,UMD,PRE,TMP,ORI]``` instead
-   */
-  onBnoData(callback: (...args: any[]) => void): void {
-    this.on("bno-data", callback);
-  }
-
-  /**
-   * @description The same as .on("bme-data", callback)
-   * @param {Function} callback The callback with the bmeData
-   * @deprecated use ```send[LOC,UMD,PRE,TMP,ORI]``` instead
-   */
-  onBmeData(callback: (...args: any[]) => void): void {
-    this.on("bme-data", callback);
-  }
-
-  /**
-   * @description The same as .on("gps-data", callback)
-   * @param {Function} callback The callback with the gpsData
-   * @deprecated use ```send[LOC,UMD,PRE,TMP,ORI]``` instead
-   */
-  onGpsData(callback: (...args: any[]) => void): void {
-    this.on("gps-data", callback);
+  send(event: string, data: any): void {
+    this.sendData(`${DELIMETERS.hasOwnProperty(event) ? DELIMETERS[event] : ""}${(data instanceof String) ? data : JSON.stringify(data)}`)
   }
 
   /**
@@ -176,39 +121,15 @@ export class XBee extends EventEmitter {
    * xbee.sendCommand("leftMotorOff")
    */
   sendCommand(command: string) {
-    this.sendData(`${COMMAND_DELIMETER}${command}`)
-  }
-
-  /**
-   * @description Send bnodata to ```onBnoData(callback)``` or ```on("bno-data", callback)``` 
-   * @param {string} bnoData data to send
-   */
-  sendBnoData(bnoData: string) {
-    this.sendData(`${BNO_DELIMETER}${bnoData}`)
-  }
-
-  /**
-   * @description Send bmedata to ```onBmeData(callback)``` or ```on("bme-data", callback)```
-   * @param {string} bmeData data to send
-   */
-  sendBmeData(bmeData: string) {
-    this.sendData(`${BME_DELIMETER}${bmeData}`)
-  }
-
-  /**
-   * @description Send gpsData to ```onGpsData(callback)``` or ```on("gps-data", callback)```
-   * @param {string} gpsData data to send
-   */
-  sendGpsData(gpsData: string) {
-    this.sendData(`${GPS_DELIMETER}${gpsData}`)
+    this.sendData(`${DELIMETERS["command"]}${command}`)
   }
 
   /**
    * @description Send location data
    * @param {any} data
    */
-  sentLOC(data: any) {
-    this.sendData(`${DELIMETERS.loc}${JSON.stringify(data)}`)
+  sendLOC(data: any) {
+    this.sendData(`${DELIMETERS["location"]}${JSON.stringify(data)}`)
   }
 
   /**
@@ -216,7 +137,7 @@ export class XBee extends EventEmitter {
    * @param {any} data
    */
   sendORI(data: any) {
-    this.sendData(`${DELIMETERS.ori}${JSON.stringify(data)}`)
+    this.sendData(`${DELIMETERS["orientation"]}${JSON.stringify(data)}`)
   }
 
   /**
@@ -224,7 +145,7 @@ export class XBee extends EventEmitter {
    * @param {any} data
    */
   sendUMD(data: any) {
-    this.sendData(`${DELIMETERS.umd}${JSON.stringify(data)}`)
+    this.sendData(`${DELIMETERS["humidity"]}${JSON.stringify(data)}`)
   }
 
   /**
@@ -232,7 +153,7 @@ export class XBee extends EventEmitter {
    * @param {any} data
    */
   sendPRE(data: any) {
-    this.sendData(`${DELIMETERS.pre}${JSON.stringify(data)}`)
+    this.sendData(`${DELIMETERS["pressure"]}${JSON.stringify(data)}`)
   }
 
   /**
@@ -240,6 +161,6 @@ export class XBee extends EventEmitter {
    * @param {any} data
    */
   sendTMP(data: any) {
-    this.sendData(`${DELIMETERS.tmp}${JSON.stringify(data)}`)
+    this.sendData(`${DELIMETERS["temperature"]}${JSON.stringify(data)}`)
   }
 }

@@ -2,9 +2,6 @@ import * as SerialPort from "serialport";
 import {
   EventEmitter
 } from "events";
-import {
-  SerCom
-} from "./Protocoler";
 
 // TODO: add custom emitter and delimeter for every type of data addParser(delimeter, emitter-name
 
@@ -39,7 +36,7 @@ export const DEFAULT_BAUDRATE: number = 115200;
  * @description Wrapper class around SerialPort default methods
  * @extends {EventEmitter}
  */
-export class XBee extends EventEmitter implements SerCom {
+export class XBee extends EventEmitter {
   port: SerialPort;
   private parser: SerialPort.parsers.Readline;
 

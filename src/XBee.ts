@@ -10,7 +10,7 @@ import {
  * @typedef {"location" | "temperature" | "orientation" | "humidity" | "pressure" | "target" | "status" | "command"} EventType
  */
 
-const DELIMETERS = {
+let DELIMETERS = {
   location: "L{",
   temperature: "T{",
   orientation: "O{",
@@ -90,7 +90,16 @@ export class XBee extends EventEmitter {
   }
 
   /**
-   * 
+   * @description Adds a custom delimeter
+   * @param {string} name
+   * @param {string} delimeter 
+   */
+  addDelimeter(name: string, delimeter: string) {
+    DELIMETERS[name] = delimeter;
+  }
+
+  /**
+   * Unified send method
    * @param {EventType} event Event name
    * @param {any} data 
    */

@@ -101,10 +101,11 @@ export class XBee extends EventEmitter {
   /**
    * Unified send method
    * @param {EventType} event Event name
-   * @param {any} data 
+   * @param {any} data
+   * @param {string | undefined} custom Custom delimeter 
    */
-  send(event: string, data: any): void {
-    this.sendData(`${DELIMETERS.hasOwnProperty(event) ? DELIMETERS[event] : ""}${(data instanceof String) ? data : JSON.stringify(data)}`)
+  send(event: string, data: any, custom?: string): void {
+    this.sendData(`${DELIMETERS.hasOwnProperty(event) ? DELIMETERS[event] : custom && custom ? custom : ""}${(data instanceof String) ? data : JSON.stringify(data)}`)
   }
 
   /**

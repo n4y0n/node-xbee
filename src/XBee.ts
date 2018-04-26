@@ -6,11 +6,10 @@ import {
 // TODO: add custom emitter and delimeter for every type of data addParser(delimeter, emitter-name
 
 /**
- * @typedef {string | Buffer | number} DATAS
  * @typedef {"location" | "temperature" | "orientation" | "humidity" | "pressure" | "target" | "status" | "command"} EventType
  */
 
-let DELIMETERS = {
+let DELIMETERS: any = {
   location: "L{",
   temperature: "T{",
   orientation: "O{",
@@ -38,7 +37,7 @@ export const DEFAULT_BAUDRATE: number = 115200;
  */
 export class XBee extends EventEmitter {
   port: SerialPort;
-  private parser: SerialPort.parsers.Readline;
+  parser: SerialPort.parsers.Readline;
 
   /**
    * @description Initialize the xbee class and bind it to a serial port
@@ -110,7 +109,7 @@ export class XBee extends EventEmitter {
 
   /**
    * @description Sends some data through the serial interface
-   * @param {DATAS} data Data to send in the form of a string, buffer, or number 
+   * @param {any} data Data to send in the form of a string, buffer, or number 
    * @example 
    * const xbee = new XBee("port")
    * let a = "data to send"

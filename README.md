@@ -22,7 +22,7 @@ import { XBee } from 'module-xbee';
 let xbee: XBee = new XBee("PORT")
 xbee.sendData("some data")
 
-xbee.on("data", function(data) {
+xbee.on("data", (data) => {
   console.log(data)
 })
 ```

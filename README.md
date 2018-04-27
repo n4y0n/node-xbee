@@ -2,7 +2,7 @@
 A xbee transparent mode module for nodejs 
 ## Installation 
 ```sh
-npm install module-xbee --save
+npm install module-xbee
 ```
 ## Usage
 ### Javascript

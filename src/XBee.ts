@@ -1,9 +1,12 @@
-import * as SerialPort from "serialport";
+import * as SerialPort from "serialport"
 import {
   EventEmitter
-} from "events";
+} from "events"
 
-// TODO: add custom emitter and delimeter for every type of data addParser(delimeter, emitter-name
+export interface IOptions {
+  delay ? : number
+  baudRate ? : number
+}
 
 /**
  * @typedef {"location" | "temperature" | "orientation" | "humidity" | "pressure" | "target" | "status" | "command"} EventType
@@ -18,51 +21,72 @@ let DELIMETERS: any = {
   target: "G{",
   status: "W{",
   command: "C{"
-};
+}
 
 
 /**
  * @description Default delimeter for the parser to work
  */
-export const DELIMETER: string = "\n"; // 0x0A
+export const DELIMETER: string = "\n" // 0x0A
 
 /**
  * @description Default baudRate for the serial port
  */
-export const DEFAULT_BAUDRATE: number = 115200;
+export const DEFAULT_BAUDRATE: number = 115200
 
 /**
  * @description Wrapper class around SerialPort default methods
  * @extends {EventEmitter}
  */
-export class XBee extends EventEmitter {
-  port: SerialPort;
-  parser: SerialPort.parsers.Readline;
+export default class XBee extends EventEmitter {
+  port: SerialPort
+  parser: SerialPort.parsers.Readline
+  sendQueue: Array<any> 
+  delay: number
+  sendloop?: NodeJS.Timer
 
   /**
    * @description Initialize the xbee class and bind it to a serial port
    * @param {string} port The port to use
    * @param {number} baudRate The baud rate for the comunication
    */
-  constructor(port: string, baudRate ? : number) {
-    super();
+  constructor(port: string, options ? : IOptions) {
+    super()
     this.port = new SerialPort(port, {
-      baudRate: baudRate || DEFAULT_BAUDRATE
-    });
+      baudRate: options ? options.baudRate ? options.baudRate : DEFAULT_BAUDRATE : DEFAULT_BAUDRATE
+    })
+
+    this.sendQueue = []
+
+    this.delay = options ? options.delay ? options.delay : 0 : 0
 
     this.port.on("error", () => {
-      console.log(`Can't connect to port: ${port}`);
-    });
+      console.log(`Can't connect to port: ${port}`)
+    })
 
     this.parser = new SerialPort.parsers.Readline({
       delimiter: DELIMETER
-    });
+    })
 
-    this.port.pipe(this.parser);
+    this.port.pipe(this.parser)
 
     this.parser.on("data", (...args: any[]) => {
       this.handleData(args)
-    });
+    })
+
+    this.startSendLoop()
+  }
+
+  startSendLoop() {
+    this.sendLoop()
+  }
+
+  sendLoop() {
+    this.sendloop = setTimeout(() => {
+      if (this.port.writable && this.sendQueue.length > 0)
+        this.port.write(`${this.sendQueue.shift()}${DELIMETER}`)
+      this.sendLoop()
+    }, this.delay)
   }
 
   /**
@@ -70,10 +94,10 @@ export class XBee extends EventEmitter {
    * @param {any[]} data Data to parse
    */
   handleData(data: any[]): void {
-    if (!data || data.length < 1) return;
+    if (!data || data.length < 1) return
     data.forEach(d => {
-      this.check(d.toString());
-    });
+      this.check(d.toString())
+    })
   }
 
   /**
@@ -94,7 +118,7 @@ export class XBee extends EventEmitter {
    * @param {string} delimeter 
    */
   addDelimeter(name: string, delimeter: string) {
-    DELIMETERS[name] = delimeter;
+    DELIMETERS[name] = delimeter
   }
 
   /**
@@ -116,8 +140,7 @@ export class XBee extends EventEmitter {
    * xbee.sendData(a)
    */
   sendData(data: any): void {
-    if (this.port.writable)
-      this.port.write(`${data}${DELIMETER}`);
+    this.sendQueue.push(data)
   }
 
   /**

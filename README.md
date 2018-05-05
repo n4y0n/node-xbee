@@ -1,6 +1,6 @@
 # Xbee module
-A xbee transparent mode module for nodejs 
-## Installation 
+A xbee transparent mode module for nodejs
+## Installation
 ```sh
 npm install module-xbee
 ```
@@ -9,7 +9,7 @@ npm install module-xbee
 ```javascript
 var XBee = require('module-xbee').XBee;
 var xbee = new XBee("PORT")
-xbee.sendData("some data")
+xbee.send("", "some data")
 
 xbee.on("data", function(data) {
   console.log(data)
@@ -20,7 +20,7 @@ xbee.on("data", function(data) {
 ```typescript
 import { XBee } from 'module-xbee';
 let xbee: XBee = new XBee("PORT")
-xbee.sendData("some data")
+xbee.send("", "some data")
 
 xbee.on("data", (data) => {
   console.log(data)

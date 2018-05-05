@@ -1,6 +1,6 @@
 {
   "name": "module-xbee",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "",
   "main": "dist/XBee.js",
   "types": "dist/XBee.d.ts",

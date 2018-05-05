@@ -5,7 +5,7 @@ import {
 } from "events"
 
 /**
- * @typedef {"location" | "temperature" | "orientation" | "humidity" | "pressure" | "target" | "status" | "command"} EventType
+ * @typedef {"position" | "temperature" | "orientation" | "humidity" | "pressure" | "target" | "status" | "command"} EventType
  */
 
 const debug = Debug("xbee-mod")
@@ -28,7 +28,7 @@ export class BufferType {
 }
 
 let DELIMETERS: any = {
-  location: "L{",
+  position: "L{",
   temperature: "T{",
   orientation: "O{",
   humidity: "U{",

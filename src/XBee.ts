@@ -4,6 +4,10 @@ import {
   EventEmitter
 } from "events"
 
+/**
+ * @typedef {"location" | "temperature" | "orientation" | "humidity" | "pressure" | "target" | "status" | "command"} EventType
+ */
+
 const debug = Debug("xbee-mod")
 const _package = require("../package.json")
 
@@ -72,7 +76,7 @@ export class XBee extends EventEmitter {
     this.delay = options ? options.delay ? options.delay : 10 : 10
 
     this.port.on("error", () => {
-			console.log("xbee fatal error")
+			console.log(" xbee :: fatal error")
 			debug(`Can't connect to port: %s`, port)
     })
 
@@ -137,7 +141,11 @@ export class XBee extends EventEmitter {
    * @param {EventType} event Event name
    * @param {any} data
    */
-  send(event: string, data: any): void {
+  send(event: any, data: any): void {
+		if (!data) {
+			data = event
+			event = ""
+		}
     this.sendQueue.push(new BufferType(event, (data instanceof String) ? data : JSON.stringify(data)))
   }
 
@@ -152,8 +160,3 @@ export class XBee extends EventEmitter {
 		})
 	}
 }
-
-
-/**
- * @typedef {"location" | "temperature" | "orientation" | "humidity" | "pressure" | "target" | "status" | "command"} EventType
- */

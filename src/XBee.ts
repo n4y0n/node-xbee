@@ -147,6 +147,11 @@ export class XBee extends EventEmitter {
 			data = event
 			event = ""
 		}
+
+		if (event === "orientation") {
+			this._send(new BufferType(event, (data instanceof String) ? data : JSON.stringify(data)))
+		}
+
 		if (this.sendQueue.length >= bufferLength) {
 			this.sendQueue.shift()
 			this.sendQueue.push(new BufferType(event, (data instanceof String) ? data : JSON.stringify(data)))

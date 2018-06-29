@@ -28,17 +28,17 @@ export class BufferType {
 }
 
 let DELIMETERS: any = {
-	position: "L{",
-	temperature: "T{",
-	orientation: "O{",
-	humidity: "U{",
-	pressure: "P{",
-	target: "G{",
-	status: "W{",
-	command: "C{"
+	position: "19L{",
+	temperature: "19T{",
+	orientation: "19O{",
+	humidity: "19U{",
+	pressure: "19P{",
+	target: "19G{",
+	status: "19W{",
+	command: "19C{"
 }
 
-const bufferLength = 10000
+const bufferLength = 20000
 
 /**
  * @description Default delimeter for the parser to work

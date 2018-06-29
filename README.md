@@ -1,5 +1,4 @@
-# Xbee module
-A xbee transparent mode module for nodejs
+# Serial communication module
 ## Installation
 //TODO
 ## Usage

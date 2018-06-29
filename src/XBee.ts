@@ -97,7 +97,7 @@ export class XBee extends EventEmitter {
 	_flush() {
 		this.sendloop = setTimeout(() => {
 			if (this.port.writable && this.sendQueue.length > 0) {
-				this._firstPhase(this.sendQueue.shift())
+				this._send(this.sendQueue.shift())
 			}
 			this._flush()
 		}, this.delay)
@@ -158,7 +158,7 @@ export class XBee extends EventEmitter {
 	/**
 	 * @param {BufferType} buffertype
 	 */
-	_firstPhase(buffertype?: BufferType) {
+	_send(buffertype?: BufferType) {
 		if (!buffertype) return debug(`No data to send`)
 		Object.keys(DELIMETERS).forEach(key => {
 			if (buffertype.type === key) this.port.write(`${DELIMETERS[key]}${buffertype.data}${DELIMETER}`)

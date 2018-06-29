@@ -60,6 +60,8 @@ export class XBee extends EventEmitter {
 	sendQueue: Array<BufferType>
 	delay: number
 	sendloop?: NodeJS.Timer
+	otime: number
+	ocooldown: number
 
   /**
    * @description Initialize the xbee class and bind it to a serial port
@@ -68,13 +70,17 @@ export class XBee extends EventEmitter {
    */
 	constructor(port: string, options?: IOptions) {
 		super()
+
+		this.otime = 0
+		this.ocooldown = 30
+
 		this.port = new SerialPort(port, {
 			baudRate: options ? options.baudRate ? options.baudRate : DEFAULT_BAUDRATE : DEFAULT_BAUDRATE
 		})
 
 		this.sendQueue = []
 
-		this.delay = options ? options.delay ? options.delay : 10 : 10
+		this.delay = options ? options.delay ? options.delay : 100 : 100
 
 		this.port.on("error", () => {
 			console.log(" xbee :: fatal error")
@@ -148,7 +154,8 @@ export class XBee extends EventEmitter {
 			event = ""
 		}
 
-		if (event === "orientation") {
+		if (event === "orientation" && !(Date.now() - this.otime < this.ocooldown)) {
+			this.otime = Date.now()
 			this._send(new BufferType(event, (data instanceof String) ? data : JSON.stringify(data)))
 		}
 
